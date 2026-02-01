@@ -28,7 +28,6 @@
             z-index: 1000; position: relative;
         }
 
-        /* NOUVEAU VISUEL HERO : L'EFFET VISEUR */
         .hero-target {
             position: relative; width: 160px; height: 160px; margin: 0 auto 40px;
             display: flex; justify-content: center; align-items: center;
@@ -61,7 +60,7 @@
         h1 { color: #2d3436; font-size: 26px; font-weight: 900; margin-bottom: 40px; line-height: 1.3; }
         
         .buttons { display: flex; justify-content: center; gap: 25px; min-height: 80px; align-items: center; }
-        button { padding: 20px 45px; font-size: 22px; font-weight: 900; border: none; border-radius: 30px; cursor: pointer; transition: 0.3s; }
+        button { padding: 20px 45px; font-size: 22px; font-weight: 900; border: none; border-radius: 30px; cursor: pointer; transition: 0.2s; }
         
         #yesBtn { background: linear-gradient(135deg, #00b894, #009473); color: white; box-shadow: 0 10px 25px rgba(0, 184, 148, 0.4); }
         #noBtn { background-color: #f8f9fa; color: #636e72; border: 2px solid #eee; position: relative; }
@@ -113,15 +112,15 @@
     function moveButton() {
         if (!hasMoved) { noBtn.style.position = 'fixed'; hasMoved = true; }
         
-        // CONFINEMENT RADICAL : Le bouton ne bouge que dans un petit carré central
-        const marginW = window.innerWidth * 0.38;
-        const marginH = window.innerHeight * 0.38;
+        // ZONE DE JEU OPTIMISÉE : Marge de 15% pour qu'il bouge bien sans sortir
+        const margin = 15; // 15% de marge
+        const minX = (window.innerWidth * margin) / 100;
+        const minY = (window.innerHeight * margin) / 100;
+        const maxX = window.innerWidth - (minX * 2) - noBtn.offsetWidth;
+        const maxY = window.innerHeight - (minY * 2) - noBtn.offsetHeight;
         
-        const rangeX = window.innerWidth - (marginW * 2) - noBtn.offsetWidth;
-        const rangeY = window.innerHeight - (marginH * 2) - noBtn.offsetHeight;
-        
-        const x = marginW + (Math.random() * rangeX);
-        const y = marginH + (Math.random() * rangeY);
+        const x = minX + (Math.random() * maxX);
+        const y = minY + (Math.random() * maxY);
         
         noBtn.style.left = x + 'px';
         noBtn.style.top = y + 'px';
@@ -131,7 +130,6 @@
         music.currentTime = 10;
         music.play();
 
-        // Feux d'artifice INFINIS
         setInterval(function() {
             confetti({ 
                 particleCount: 60, spread: 100, 
@@ -154,7 +152,6 @@
         return false;
     }
 
-    // Vitesse 1.6s
     const imgCycle = setInterval(() => {
         const img = document.createElement('img');
         img.src = photos[photoIndex];
