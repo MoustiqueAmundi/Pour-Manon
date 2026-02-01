@@ -6,7 +6,7 @@
     <title>Pour Manon ☕️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&display=swap');
 
         body {
             display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;
@@ -17,46 +17,61 @@
         body::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://upload.wikimedia.org/wikipedia/commons/a/aa/Logo_d%27Amundi.png');
-            background-repeat: repeat; background-size: 85px; opacity: 0.1; z-index: -1;
+            background-repeat: repeat; background-size: 85px; opacity: 0.12; z-index: -1;
         }
 
         .container {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            padding: 50px; border-radius: 50px; box-shadow: 0 40px 80px rgba(0,0,0,0.15);
-            border: 1px solid rgba(255, 255, 255, 0.8); text-align: center; width: 85%; max-width: 450px; 
+            padding: 60px 40px; border-radius: 50px; box-shadow: 0 40px 80px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255, 255, 255, 0.8); text-align: center; width: 90%; max-width: 450px; 
             z-index: 1000; position: relative;
         }
 
-        /* VISUEL HERO MASSIF EN CODE */
-        .hero-container { position: relative; width: 140px; height: 140px; margin: 0 auto 35px; }
-        .coffee-svg { width: 100%; height: 100%; fill: #00b894; filter: drop-shadow(0 10px 15px rgba(0,184,148,0.2)); }
-        .pointing-finger { 
-            position: absolute; top: -15px; right: -35px; font-size: 90px; 
-            animation: pointAction 1.2s ease-in-out infinite; 
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+        /* NOUVEAU VISUEL HERO : L'EFFET VISEUR */
+        .hero-target {
+            position: relative; width: 160px; height: 160px; margin: 0 auto 40px;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .target-ring {
+            position: absolute; width: 100%; height: 100%;
+            border: 4px dashed #00b894; border-radius: 50%;
+            animation: rotate 10s linear infinite; opacity: 0.4;
+        }
+
+        .main-pointer {
+            font-size: 100px; z-index: 2;
+            animation: zoomPulse 1.5s ease-in-out infinite;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
             user-select: none;
         }
 
-        @keyframes pointAction {
-            0%, 100% { transform: scale(1) rotate(-15deg); }
-            50% { transform: scale(1.15) rotate(-5deg); }
+        .coffee-badge {
+            position: absolute; bottom: 0; right: -10px;
+            background: #00b894; color: white; padding: 8px 15px;
+            border-radius: 20px; font-weight: 900; font-size: 14px;
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
+            transform: rotate(10deg); z-index: 3;
         }
 
-        h1 { color: #2d3436; font-size: 24px; font-weight: 700; margin-bottom: 35px; line-height: 1.4; }
-        .buttons { display: flex; justify-content: center; gap: 25px; min-height: 80px; align-items: center; }
-        
-        button { padding: 18px 40px; font-size: 20px; font-weight: 700; border: none; border-radius: 25px; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        #yesBtn { background: linear-gradient(135deg, #00b894, #009473); color: white; box-shadow: 0 10px 25px rgba(0, 184, 148, 0.4); }
-        #yesBtn:hover { transform: scale(1.1); }
-        #noBtn { background-color: #f8f9fa; color: #636e72; border: 1px solid #eee; position: relative; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes zoomPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
 
-        .disclaimer { font-size: 12px; color: #636e72; margin-top: 35px; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 25px; font-style: italic; }
-        .success-gif { width: 100%; border-radius: 35px; margin-top: 25px; }
+        h1 { color: #2d3436; font-size: 26px; font-weight: 900; margin-bottom: 40px; line-height: 1.3; }
+        
+        .buttons { display: flex; justify-content: center; gap: 25px; min-height: 80px; align-items: center; }
+        button { padding: 20px 45px; font-size: 22px; font-weight: 900; border: none; border-radius: 30px; cursor: pointer; transition: 0.3s; }
+        
+        #yesBtn { background: linear-gradient(135deg, #00b894, #009473); color: white; box-shadow: 0 10px 25px rgba(0, 184, 148, 0.4); }
+        #noBtn { background-color: #f8f9fa; color: #636e72; border: 2px solid #eee; position: relative; }
+
+        .disclaimer { font-size: 13px; color: #636e72; margin-top: 40px; border-top: 2px solid rgba(0,0,0,0.05); padding-top: 30px; font-style: italic; }
+        .success-gif { width: 100%; border-radius: 40px; margin-top: 25px; border: 8px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
 
         .popup-image { 
-            position: absolute; z-index: 10; width: 165px; border-radius: 25px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.25); border: 7px solid white;
+            position: absolute; z-index: 10; width: 170px; border-radius: 25px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 8px solid white;
             transition: opacity 0.8s ease; pointer-events: none; transform: rotate(var(--rotation));
         }
     </style>
@@ -67,22 +82,21 @@
 
 <div class="container" id="mainCard">
     <div id="content">
-        <div class="hero-container">
-            <svg class="coffee-svg" viewBox="0 0 512 512">
-                <path d="M400 192H32V16h368v176zM48 48v112h336V48H48zm416 48v96c0 53-43 96-96 96h-32v32h32c70.7 0 128-57.3 128-128V96h-32zM32 272c0 53 43 96 96 96h160c53 0 96-43 96-96v-32H32v32zm352 0v16c0 35.3-28.7 64-64 64H128c-35.3 0-64-28.7-64-64v-16h320zM256 464c110.5 0 200-89.5 200-200h32c0 128.1-103.9 232-232 232S24 392.1 24 264h32c0 110.5 89.5 200 200 200z"/>
-            </svg>
-            <div class="pointing-finger">🫵</div>
+        <div class="hero-target">
+            <div class="target-ring"></div>
+            <div class="main-pointer">🫵</div>
+            <div class="coffee-badge">CAFE ?</div>
         </div>
-        <h1>Hey, toi, oui toi, est-ce que ça te dit d’aller prendre un p’tit café ?</h1>
+        <h1>Hey, toi, oui toi... <br>On va le prendre ce café ?</h1>
         <div class="buttons">
-            <button id="yesBtn" onclick="celebrate()">Oui</button>
-            <button id="noBtn" onmouseover="moveButton()">Non</button>
+            <button id="yesBtn" onclick="celebrate()">OUI !</button>
+            <button id="noBtn" onmouseover="moveButton()">NON</button>
         </div>
-        <p class="disclaimer">Étude The Times : Boire un café avec JS <br> augmente 9 fois sur 10 la satisfaction au travail.</p>
+        <p class="disclaimer">Étude The Times : Boire un café avec JS augmente 9 fois sur 10 la satisfaction au travail.</p>
     </div>
     <div id="celebration" style="display:none;">
         <img src="https://alivreouvert.net/wp-content/uploads/2017/02/party-gif.gif" class="success-gif">
-        <h2 style="margin-top:25px; color: #00b894; font-size: 28px;">Yahouuuuu!!! 🎉🥳</h2>
+        <h2 style="margin-top:25px; color: #00b894; font-size: 32px; font-weight: 900;">C'EST PARTI ! 🎉🥳</h2>
     </div>
 </div>
 
@@ -99,9 +113,9 @@
     function moveButton() {
         if (!hasMoved) { noBtn.style.position = 'fixed'; hasMoved = true; }
         
-        // CONFINEMENT : Marge de 35% pour rester au centre
-        const marginW = window.innerWidth * 0.35;
-        const marginH = window.innerHeight * 0.35;
+        // CONFINEMENT RADICAL : Le bouton ne bouge que dans un petit carré central
+        const marginW = window.innerWidth * 0.38;
+        const marginH = window.innerHeight * 0.38;
         
         const rangeX = window.innerWidth - (marginW * 2) - noBtn.offsetWidth;
         const rangeY = window.innerHeight - (marginH * 2) - noBtn.offsetHeight;
@@ -120,11 +134,11 @@
         // Feux d'artifice INFINIS
         setInterval(function() {
             confetti({ 
-                particleCount: 50, spread: 90, 
+                particleCount: 60, spread: 100, 
                 origin: { x: Math.random(), y: Math.random() - 0.2 }, 
-                zIndex: 2000, colors: ['#00b894', '#ffffff', '#ffce54']
+                zIndex: 2000, colors: ['#00b894', '#ffffff', '#ffd700']
             });
-        }, 400);
+        }, 350);
 
         document.getElementById('content').style.display = 'none';
         document.getElementById('celebration').style.display = 'block';
@@ -135,12 +149,12 @@
     function isOverlapping(x, y) {
         for (let pos of activePhotoPositions) {
             const dist = Math.sqrt(Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2));
-            if (dist < 200) return true; 
+            if (dist < 210) return true; 
         }
         return false;
     }
 
-    // Fréquence 1.6s
+    // Vitesse 1.6s
     const imgCycle = setInterval(() => {
         const img = document.createElement('img');
         img.src = photos[photoIndex];
@@ -151,10 +165,10 @@
         let x, y, attempts = 0;
 
         do {
-            x = Math.random() * (window.innerWidth - 180);
-            y = Math.random() * (window.innerHeight - 180);
+            x = Math.random() * (window.innerWidth - 190);
+            y = Math.random() * (window.innerHeight - 190);
             attempts++;
-        } while (attempts < 60 && (isOverlapping(x, y) || (x < cardRect.right + 40 && x + 160 > cardRect.left - 40 && y < cardRect.bottom + 40 && y + 160 > cardRect.top - 40)));
+        } while (attempts < 60 && (isOverlapping(x, y) || (x < cardRect.right + 50 && x + 170 > cardRect.left - 50 && y < cardRect.bottom + 50 && y + 170 > cardRect.top - 50)));
 
         activePhotoPositions.push({x, y});
         img.style.left = x + 'px'; img.style.top = y + 'px';
