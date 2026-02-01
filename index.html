@@ -10,59 +10,70 @@
 
         body {
             display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;
-            background-color: #f0fff4; font-family: 'Montserrat', sans-serif; overflow: hidden; position: relative;
+            /* Fond avec dégradé radial pour plus de profondeur */
+            background: radial-gradient(circle, #fafffc 0%, #e1f5ea 100%);
+            font-family: 'Montserrat', sans-serif; overflow: hidden; position: relative;
         }
 
-        /* Mosaïque Amundi */
+        /* Mosaïque Amundi stylisée */
         body::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://upload.wikimedia.org/wikipedia/commons/a/aa/Logo_d%27Amundi.png');
-            background-repeat: repeat; background-size: 65px; opacity: 0.1; z-index: -1;
+            background-repeat: repeat; background-size: 75px; opacity: 0.06; z-index: -1;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 45px; border-radius: 35px; 
-            box-shadow: 0 25px 50px rgba(0,0,0,0.08);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 45px; border-radius: 40px; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.6);
             text-align: center; width: 85%; max-width: 420px; 
-            z-index: 50; position: relative;
+            z-index: 1000; position: relative;
         }
 
-        .icon { font-size: 60px; margin-bottom: 20px; display: block; }
-        h1 { color: #1a2a3a; font-size: 22px; font-weight: 700; margin-bottom: 30px; line-height: 1.5; }
+        /* Animation de la tasse qui fume */
+        .coffee-container { margin-bottom: 20px; }
+        .coffee-icon { font-size: 65px; display: inline-block; animation: float 3s ease-in-out infinite; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
 
-        .buttons { display: flex; justify-content: center; gap: 25px; min-height: 70px; align-items: center; }
+        h1 { color: #2d3436; font-size: 22px; font-weight: 700; margin-bottom: 30px; line-height: 1.5; }
+
+        .buttons { display: flex; justify-content: center; gap: 20px; min-height: 70px; align-items: center; }
         
         button { 
-            padding: 15px 35px; font-size: 18px; font-weight: 700; border: none; 
+            padding: 16px 36px; font-size: 18px; font-weight: 700; border: none; 
             border-radius: 20px; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         #yesBtn { 
-            background: linear-gradient(135deg, #00b894, #55efc4); color: white; 
-            box-shadow: 0 8px 20px rgba(0, 184, 148, 0.25);
+            background: linear-gradient(135deg, #00b894, #00a383); color: white; 
+            box-shadow: 0 10px 25px rgba(0, 184, 148, 0.3);
         }
         #yesBtn:hover { transform: scale(1.1); }
 
-        #noBtn { background-color: #ffffff; color: #636e72; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        #noBtn { 
+            background-color: #ffffff; color: #636e72; 
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            position: relative;
+        }
 
         .disclaimer { 
             font-size: 11px; color: #636e72; margin-top: 30px; 
-            border-top: 1px solid rgba(0,0,0,0.05); padding-top: 20px; font-style: italic; 
+            border-top: 1px solid rgba(0,0,0,0.06); padding-top: 20px; font-style: italic; 
         }
 
-        .success-gif { width: 100%; border-radius: 25px; margin-top: 20px; }
+        .success-gif { width: 100%; border-radius: 30px; margin-top: 20px; }
 
         .popup-image { 
-            position: absolute; 
-            z-index: 10; /* Derrière le container (50) mais devant le fond */
-            width: 140px; border-radius: 20px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15); 
-            border: 5px solid white;
-            transition: opacity 0.6s ease; pointer-events: none;
+            position: absolute; z-index: 10; width: 155px; border-radius: 22px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.18); border: 6px solid white;
+            transition: opacity 0.8s ease; pointer-events: none;
             transform: rotate(var(--rotation));
         }
     </style>
@@ -71,7 +82,9 @@
 
 <div class="container" id="mainCard">
     <div id="content">
-        <span class="icon">☕️ 🫵</span>
+        <div class="coffee-container">
+            <span class="coffee-icon">☕️</span>
+        </div>
         <h1>Hey, toi, oui toi, est-ce que ça te dit d’aller prendre un p’tit café ?</h1>
         <div class="buttons">
             <button id="yesBtn" onclick="celebrate()">Oui</button>
@@ -93,17 +106,29 @@
     const mainCard = document.getElementById('mainCard');
     let hasMoved = false;
     
-    const photos = ['7eaaf27b-6ed7-4482-9cec-f17b075a9f49.jpeg', 'IMG_2860.jpeg'];
+    // Liste mise à jour avec IMG_8449.jpeg
+    const photos = [
+        '7eaaf27b-6ed7-4482-9cec-f17b075a9f49.jpeg', 
+        'IMG_2860.jpeg',
+        'IMG_8449.jpeg',
+        'IMG_8445.jpeg',
+        'IMG_8443.jpeg',
+        'IMG_8448.jpeg',
+        'IMG_8447.jpeg'
+    ];
     let photoIndex = 0;
+    const activePhotoPositions = [];
 
     function moveButton() {
-        if (!hasMoved) {
-            noBtn.style.position = 'fixed';
-            hasMoved = true;
-        }
-        // Calcul pour éviter que le bouton sorte totalement de l'écran
-        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+        if (!hasMoved) { noBtn.style.position = 'fixed'; hasMoved = true; }
+        
+        // Limites strictes pour que le bouton ne sorte jamais de l'écran
+        const padding = 20;
+        const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+        const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+        
+        const x = Math.max(padding, Math.random() * maxX);
+        const y = Math.max(padding, Math.random() * maxY);
         
         noBtn.style.left = x + 'px';
         noBtn.style.top = y + 'px';
@@ -116,6 +141,15 @@
         document.querySelectorAll('.popup-image').forEach(img => img.style.opacity = '0');
     }
 
+    // Fonction pour éviter la superposition des photos entre elles
+    function checkOverlap(newX, newY) {
+        for (let pos of activePhotoPositions) {
+            const distance = Math.sqrt(Math.pow(newX - pos.x, 2) + Math.pow(newY - pos.y, 2));
+            if (distance < 170) return true; // Distance de sécurité (largeur photo + marge)
+        }
+        return false;
+    }
+
     const imgCycle = setInterval(() => {
         const img = document.createElement('img');
         img.src = photos[photoIndex];
@@ -123,35 +157,36 @@
         img.className = 'popup-image';
         
         const cardRect = mainCard.getBoundingClientRect();
-        let x, y;
+        let x, y, attempts = 0;
 
-        // Logique pour spawner hors de l'encadré blanc
-        let attempts = 0;
         do {
-            x = Math.random() * (window.innerWidth - 160);
-            y = Math.random() * (window.innerHeight - 160);
+            x = Math.random() * (window.innerWidth - 180);
+            y = Math.random() * (window.innerHeight - 180);
             attempts++;
-            // On vérifie si la position overlap avec la carte centrale
+            // On vérifie : 1. Pas de chevauchement entre photos 2. Pas derrière l'encadré blanc
         } while (
-            attempts < 20 &&
-            x < cardRect.right + 20 && 
-            x + 150 > cardRect.left - 20 &&
-            y < cardRect.bottom + 20 && 
-            y + 150 > cardRect.top - 20
+            attempts < 50 && (
+                checkOverlap(x, y) || 
+                (x < cardRect.right + 30 && x + 160 > cardRect.left - 30 && y < cardRect.bottom + 30 && y + 160 > cardRect.top - 30)
+            )
         );
 
+        activePhotoPositions.push({x, y});
         img.style.left = x + 'px';
         img.style.top = y + 'px';
-        const randomRot = (Math.random() * 24 - 12) + 'deg';
-        img.style.setProperty('--rotation', randomRot);
+        img.style.setProperty('--rotation', (Math.random() * 24 - 12) + 'deg');
 
         document.body.appendChild(img);
         
+        // On retire la position de la liste quand l'image disparaît
         setTimeout(() => { 
             img.style.opacity = '0'; 
-            setTimeout(() => img.remove(), 600); 
-        }, 3000);
-    }, 2000);
+            setTimeout(() => {
+                img.remove();
+                activePhotoPositions.shift();
+            }, 800); 
+        }, 4000);
+    }, 2200);
 </script>
 </body>
 </html>
