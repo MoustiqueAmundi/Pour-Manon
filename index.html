@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer"> <title>Pour Manon ☕️</title>
+    <title>Pour Manon ☕️</title>
     <style>
         body {
             display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;
@@ -27,7 +27,6 @@
         #noBtn { background-color: #e0e0e0; color: #555; position: fixed; z-index: 100; }
         
         .disclaimer { font-size: 11px; color: #888; font-style: italic; margin-top: 10px; line-height: 1.5; }
-        
         .success-gif { width: 100%; border-radius: 10px; margin-top: 15px; display: block; }
         
         .popup-image { 
@@ -52,7 +51,7 @@
         </p>
     </div>
     <div id="celebration" style="display:none;">
-        <img src="https://usagif.com/wp-content/uploads/upgifsok/party-7.gif" class="success-gif">
+        <img src="fete.gif" class="success-gif">
         <h2 style="margin-top:10px; color: #ff4081;">Yahouuuuu!!! 🎉🥳</h2>
     </div>
 </div>
@@ -77,8 +76,8 @@
 
     const imgCycle = setInterval(() => {
         const img = document.createElement('img');
-        // Utilisation du lien direct que tu m'as donné
-        img.src = 'https://i.postimg.cc/Hk1vTfrM/7eaaf27b-6ed7-4482-9cec-f17b075a9f49.jpg';
+        // Utilise le fichier photo.jpg monté sur ton github
+        img.src = 'photo.jpg';
         img.className = 'popup-image';
         img.style.left = Math.random() * (window.innerWidth - 130) + 'px';
         img.style.top = Math.random() * (window.innerHeight - 130) + 'px';
