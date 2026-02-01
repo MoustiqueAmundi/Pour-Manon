@@ -5,41 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
     <title>Pour Manon ☕️</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
         body {
             display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;
-            /* Fond avec dégradé radial pour plus de profondeur */
-            background: radial-gradient(circle, #fafffc 0%, #e1f5ea 100%);
+            /* Effet Radial prononcé */
+            background: radial-gradient(circle, #ffffff 0%, #c1e9d2 100%);
             font-family: 'Montserrat', sans-serif; overflow: hidden; position: relative;
         }
 
-        /* Mosaïque Amundi stylisée */
         body::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://upload.wikimedia.org/wikipedia/commons/a/aa/Logo_d%27Amundi.png');
-            background-repeat: repeat; background-size: 75px; opacity: 0.06; z-index: -1;
+            background-repeat: repeat; background-size: 75px; opacity: 0.08; z-index: -1;
         }
 
         .container {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             padding: 45px; border-radius: 40px; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+            border: 1px solid rgba(255, 255, 255, 0.7);
             text-align: center; width: 85%; max-width: 420px; 
             z-index: 1000; position: relative;
         }
 
-        /* Animation de la tasse qui fume */
-        .coffee-container { margin-bottom: 20px; }
-        .coffee-icon { font-size: 65px; display: inline-block; animation: float 3s ease-in-out infinite; }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(2deg); }
-        }
+        .coffee-icon { font-size: 65px; display: inline-block; animation: float 3s ease-in-out infinite; margin-bottom: 20px;}
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         h1 { color: #2d3436; font-size: 22px; font-weight: 700; margin-bottom: 30px; line-height: 1.5; }
 
@@ -47,27 +41,13 @@
         
         button { 
             padding: 16px 36px; font-size: 18px; font-weight: 700; border: none; 
-            border-radius: 20px; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 20px; cursor: pointer; transition: all 0.3s ease;
         }
 
-        #yesBtn { 
-            background: linear-gradient(135deg, #00b894, #00a383); color: white; 
-            box-shadow: 0 10px 25px rgba(0, 184, 148, 0.3);
-        }
-        #yesBtn:hover { transform: scale(1.1); }
+        #yesBtn { background: linear-gradient(135deg, #00b894, #009473); color: white; box-shadow: 0 10px 20px rgba(0, 184, 148, 0.3); }
+        #noBtn { background-color: #fff; color: #636e72; border: 1px solid #eee; position: relative; }
 
-        #noBtn { 
-            background-color: #ffffff; color: #636e72; 
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            position: relative;
-        }
-
-        .disclaimer { 
-            font-size: 11px; color: #636e72; margin-top: 30px; 
-            border-top: 1px solid rgba(0,0,0,0.06); padding-top: 20px; font-style: italic; 
-        }
-
+        .disclaimer { font-size: 11px; color: #636e72; margin-top: 30px; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 20px; font-style: italic; }
         .success-gif { width: 100%; border-radius: 30px; margin-top: 20px; }
 
         .popup-image { 
@@ -80,11 +60,11 @@
 </head>
 <body>
 
+<audio id="victoryMusic" src="2672.mp3" loop></audio>
+
 <div class="container" id="mainCard">
     <div id="content">
-        <div class="coffee-container">
-            <span class="coffee-icon">☕️</span>
-        </div>
+        <div class="coffee-icon">☕️</div>
         <h1>Hey, toi, oui toi, est-ce que ça te dit d’aller prendre un p’tit café ?</h1>
         <div class="buttons">
             <button id="yesBtn" onclick="celebrate()">Oui</button>
@@ -104,17 +84,12 @@
 <script>
     const noBtn = document.getElementById('noBtn');
     const mainCard = document.getElementById('mainCard');
+    const music = document.getElementById('victoryMusic');
     let hasMoved = false;
     
-    // Liste mise à jour avec IMG_8449.jpeg
     const photos = [
-        '7eaaf27b-6ed7-4482-9cec-f17b075a9f49.jpeg', 
-        'IMG_2860.jpeg',
-        'IMG_8449.jpeg',
-        'IMG_8445.jpeg',
-        'IMG_8443.jpeg',
-        'IMG_8448.jpeg',
-        'IMG_8447.jpeg'
+        '7eaaf27b-6ed7-4482-9cec-f17b075a9f49.jpeg', 'IMG_2860.jpeg', 'IMG_8449.jpeg',
+        'IMG_8445.jpeg', 'IMG_8443.jpeg', 'IMG_8448.jpeg', 'IMG_8447.jpeg'
     ];
     let photoIndex = 0;
     const activePhotoPositions = [];
@@ -122,30 +97,46 @@
     function moveButton() {
         if (!hasMoved) { noBtn.style.position = 'fixed'; hasMoved = true; }
         
-        // Limites strictes pour que le bouton ne sorte jamais de l'écran
-        const padding = 20;
-        const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-        const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+        // Sécurité pour rester DANS l'écran (marge de 20px)
+        const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+        const maxY = window.innerHeight - noBtn.offsetHeight - 20;
         
-        const x = Math.max(padding, Math.random() * maxX);
-        const y = Math.max(padding, Math.random() * maxY);
+        const x = Math.max(20, Math.random() * maxX);
+        const y = Math.max(20, Math.random() * maxY);
         
         noBtn.style.left = x + 'px';
         noBtn.style.top = y + 'px';
     }
 
     function celebrate() {
+        // Lancer la musique
+        music.play();
+
+        // Lancer les feux d'artifice en boucle
+        var duration = 15 * 1000;
+        var animationEnd = Date.now() + duration;
+        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 2000 };
+
+        function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+        var interval = setInterval(function() {
+            var timeLeft = animationEnd - Date.now();
+            if (timeLeft <= 0) { return clearInterval(interval); }
+            var particleCount = 50 * (timeLeft / duration);
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+        }, 250);
+
         document.getElementById('content').style.display = 'none';
         document.getElementById('celebration').style.display = 'block';
         clearInterval(imgCycle);
         document.querySelectorAll('.popup-image').forEach(img => img.style.opacity = '0');
     }
 
-    // Fonction pour éviter la superposition des photos entre elles
     function checkOverlap(newX, newY) {
         for (let pos of activePhotoPositions) {
             const distance = Math.sqrt(Math.pow(newX - pos.x, 2) + Math.pow(newY - pos.y, 2));
-            if (distance < 170) return true; // Distance de sécurité (largeur photo + marge)
+            if (distance < 170) return true;
         }
         return false;
     }
@@ -163,7 +154,6 @@
             x = Math.random() * (window.innerWidth - 180);
             y = Math.random() * (window.innerHeight - 180);
             attempts++;
-            // On vérifie : 1. Pas de chevauchement entre photos 2. Pas derrière l'encadré blanc
         } while (
             attempts < 50 && (
                 checkOverlap(x, y) || 
@@ -175,16 +165,11 @@
         img.style.left = x + 'px';
         img.style.top = y + 'px';
         img.style.setProperty('--rotation', (Math.random() * 24 - 12) + 'deg');
-
         document.body.appendChild(img);
         
-        // On retire la position de la liste quand l'image disparaît
         setTimeout(() => { 
             img.style.opacity = '0'; 
-            setTimeout(() => {
-                img.remove();
-                activePhotoPositions.shift();
-            }, 800); 
+            setTimeout(() => { img.remove(); activePhotoPositions.shift(); }, 800); 
         }, 4000);
     }, 2200);
 </script>
