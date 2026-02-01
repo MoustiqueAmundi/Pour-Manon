@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer">
     <title>Pour Manon ☕️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
@@ -11,7 +10,6 @@
 
         body {
             display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;
-            /* Effet Radial prononcé */
             background: radial-gradient(circle, #ffffff 0%, #c1e9d2 100%);
             font-family: 'Montserrat', sans-serif; overflow: hidden; position: relative;
         }
@@ -19,31 +17,32 @@
         body::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://upload.wikimedia.org/wikipedia/commons/a/aa/Logo_d%27Amundi.png');
-            background-repeat: repeat; background-size: 75px; opacity: 0.08; z-index: -1;
+            background-repeat: repeat; background-size: 75px; opacity: 0.1; z-index: -1;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            padding: 45px; border-radius: 40px; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.12);
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            text-align: center; width: 85%; max-width: 420px; 
+            padding: 40px; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+            border: 1px solid rgba(255, 255, 255, 0.7); text-align: center; width: 85%; max-width: 420px; 
             z-index: 1000; position: relative;
         }
 
-        .coffee-icon { font-size: 65px; display: inline-block; animation: float 3s ease-in-out infinite; margin-bottom: 20px;}
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        /* Nouveau visuel "Visé" */
+        .target-box { margin-bottom: 25px; position: relative; display: inline-block; }
+        .target-circle { 
+            width: 80px; height: 80px; background: #00b894; border-radius: 50%; 
+            display: flex; justify-content: center; align-items: center; font-size: 40px;
+            box-shadow: 0 0 20px rgba(0, 184, 148, 0.4); animation: pulse 2s infinite;
+        }
+        .pointer-icon { position: absolute; bottom: -10px; right: -10px; font-size: 35px; transform: rotate(-15deg); }
 
-        h1 { color: #2d3436; font-size: 22px; font-weight: 700; margin-bottom: 30px; line-height: 1.5; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
+        h1 { color: #2d3436; font-size: 21px; font-weight: 700; margin-bottom: 30px; line-height: 1.5; }
         .buttons { display: flex; justify-content: center; gap: 20px; min-height: 70px; align-items: center; }
         
-        button { 
-            padding: 16px 36px; font-size: 18px; font-weight: 700; border: none; 
-            border-radius: 20px; cursor: pointer; transition: all 0.3s ease;
-        }
-
+        button { padding: 16px 36px; font-size: 18px; font-weight: 700; border: none; border-radius: 20px; cursor: pointer; transition: 0.3s; }
         #yesBtn { background: linear-gradient(135deg, #00b894, #009473); color: white; box-shadow: 0 10px 20px rgba(0, 184, 148, 0.3); }
         #noBtn { background-color: #fff; color: #636e72; border: 1px solid #eee; position: relative; }
 
@@ -53,8 +52,7 @@
         .popup-image { 
             position: absolute; z-index: 10; width: 155px; border-radius: 22px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.18); border: 6px solid white;
-            transition: opacity 0.8s ease; pointer-events: none;
-            transform: rotate(var(--rotation));
+            transition: opacity 0.8s ease; pointer-events: none; transform: rotate(var(--rotation));
         }
     </style>
 </head>
@@ -64,16 +62,16 @@
 
 <div class="container" id="mainCard">
     <div id="content">
-        <div class="coffee-icon">☕️</div>
+        <div class="target-box">
+            <div class="target-circle">☕️</div>
+            <div class="pointer-icon">🫵</div>
+        </div>
         <h1>Hey, toi, oui toi, est-ce que ça te dit d’aller prendre un p’tit café ?</h1>
         <div class="buttons">
             <button id="yesBtn" onclick="celebrate()">Oui</button>
             <button id="noBtn" onmouseover="moveButton()">Non</button>
         </div>
-        <p class="disclaimer">
-            Étude The Times : Boire un café avec JS <br> 
-            augmente 9 fois sur 10 la satisfaction au travail.
-        </p>
+        <p class="disclaimer">Étude The Times : Boire un café avec JS <br> augmente 9 fois sur 10 la satisfaction au travail.</p>
     </div>
     <div id="celebration" style="display:none;">
         <img src="https://alivreouvert.net/wp-content/uploads/2017/02/party-gif.gif" class="success-gif">
@@ -87,58 +85,38 @@
     const music = document.getElementById('victoryMusic');
     let hasMoved = false;
     
-    const photos = [
-        '7eaaf27b-6ed7-4482-9cec-f17b075a9f49.jpeg', 'IMG_2860.jpeg', 'IMG_8449.jpeg',
-        'IMG_8445.jpeg', 'IMG_8443.jpeg', 'IMG_8448.jpeg', 'IMG_8447.jpeg'
-    ];
+    const photos = ['7eaaf27b-6ed7-4482-9cec-f17b075a9f49.jpeg', 'IMG_2860.jpeg', 'IMG_8449.jpeg', 'IMG_8445.jpeg', 'IMG_8443.jpeg', 'IMG_8448.jpeg', 'IMG_8447.jpeg'];
     let photoIndex = 0;
     const activePhotoPositions = [];
 
     function moveButton() {
         if (!hasMoved) { noBtn.style.position = 'fixed'; hasMoved = true; }
+        // Cadre réduit de 15% pour éviter les bords
+        const margin = window.innerWidth * 0.15;
+        const maxX = window.innerWidth - noBtn.offsetWidth - margin;
+        const maxY = window.innerHeight - noBtn.offsetHeight - margin;
         
-        // Sécurité pour rester DANS l'écran (marge de 20px)
-        const maxX = window.innerWidth - noBtn.offsetWidth - 20;
-        const maxY = window.innerHeight - noBtn.offsetHeight - 20;
-        
-        const x = Math.max(20, Math.random() * maxX);
-        const y = Math.max(20, Math.random() * maxY);
+        const x = Math.max(margin, Math.random() * maxX);
+        const y = Math.max(margin, Math.random() * maxY);
         
         noBtn.style.left = x + 'px';
         noBtn.style.top = y + 'px';
     }
 
     function celebrate() {
-        // Lancer la musique
+        // Musique à partir de 10 secondes
+        music.currentTime = 10;
         music.play();
 
-        // Lancer les feux d'artifice en boucle
-        var duration = 15 * 1000;
-        var animationEnd = Date.now() + duration;
-        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 2000 };
-
-        function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-
-        var interval = setInterval(function() {
-            var timeLeft = animationEnd - Date.now();
-            if (timeLeft <= 0) { return clearInterval(interval); }
-            var particleCount = 50 * (timeLeft / duration);
-            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-        }, 250);
+        // Feux d'artifice INFINIS
+        setInterval(function() {
+            confetti({ particleCount: 40, spread: 70, origin: { x: Math.random(), y: Math.random() - 0.2 }, zIndex: 2000 });
+        }, 300);
 
         document.getElementById('content').style.display = 'none';
         document.getElementById('celebration').style.display = 'block';
         clearInterval(imgCycle);
         document.querySelectorAll('.popup-image').forEach(img => img.style.opacity = '0');
-    }
-
-    function checkOverlap(newX, newY) {
-        for (let pos of activePhotoPositions) {
-            const distance = Math.sqrt(Math.pow(newX - pos.x, 2) + Math.pow(newY - pos.y, 2));
-            if (distance < 170) return true;
-        }
-        return false;
     }
 
     const imgCycle = setInterval(() => {
@@ -154,23 +132,12 @@
             x = Math.random() * (window.innerWidth - 180);
             y = Math.random() * (window.innerHeight - 180);
             attempts++;
-        } while (
-            attempts < 50 && (
-                checkOverlap(x, y) || 
-                (x < cardRect.right + 30 && x + 160 > cardRect.left - 30 && y < cardRect.bottom + 30 && y + 160 > cardRect.top - 30)
-            )
-        );
+        } while (attempts < 50 && (x < cardRect.right + 30 && x + 150 > cardRect.left - 30 && y < cardRect.bottom + 30 && y + 150 > cardRect.top - 30));
 
-        activePhotoPositions.push({x, y});
-        img.style.left = x + 'px';
-        img.style.top = y + 'px';
+        img.style.left = x + 'px'; img.style.top = y + 'px';
         img.style.setProperty('--rotation', (Math.random() * 24 - 12) + 'deg');
         document.body.appendChild(img);
-        
-        setTimeout(() => { 
-            img.style.opacity = '0'; 
-            setTimeout(() => { img.remove(); activePhotoPositions.shift(); }, 800); 
-        }, 4000);
+        setTimeout(() => { img.style.opacity = '0'; setTimeout(() => img.remove(), 800); }, 4000);
     }, 2200);
 </script>
 </body>
