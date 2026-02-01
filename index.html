@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pour Manon 🍻</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fce4ec;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        .container {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            position: relative;
+        }
+        h1 { color: #333; font-size: 24px; }
+        .beer-icon { font-size: 80px; margin-bottom: 20px; }
+        .buttons { margin-top: 30px; display: flex; justify-content: center; gap: 20px; }
+        
+        button {
+            padding: 12px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        #yesBtn { background-color: #ff4081; color: white; }
+        #noBtn { background-color: #e0e0e0; color: #555; position: absolute; }
+        
+        .success-gif { display: none; width: 100%; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="mainCard">
+    <div id="content">
+        <div class="beer-icon">🍺</div>
+        <h1>Manon, est-ce que tu veux bien aller boire un verre ?</h1>
+        <div class="buttons">
+            <button id="yesBtn" onclick="celebrate()">Oui</button>
+            <button id="noBtn" onmouseover="moveButton()">Non</button>
+        </div>
+    </div>
+    <div id="celebration" style="display:none;">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZ3bmZqZzR4eXh4eXh4eXh4eXh4eXh4eXh4eXh4eXh4eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l2JhORT5IFXc6EY4o/giphy.gif" alt="Fête" class="success-gif" style="display:block;">
+        <h2>Santé ! 🎉🍻</h2>
+    </div>
+</div>
+
+<script>
+    function moveButton() {
+        const x = Math.random() * (window.innerWidth - 100);
+        const y = Math.random() * (window.innerHeight - 50);
+        const btn = document.getElementById('noBtn');
+        btn.style.left = x + 'px';
+        btn.style.top = y + 'px';
+    }
+
+    function celebrate() {
+        document.getElementById('content').style.display = 'none';
+        document.getElementById('celebration').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
