@@ -11,14 +11,13 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            /* Fond vert pomme */
             background-color: #e6ffe6; 
             font-family: 'Arial', sans-serif;
-            overflow: hidden; /* Empêche le scroll si le bouton sort de l'écran */
-            position: relative; /* Pour positionner les éléments en arrière-plan */
+            overflow: hidden;
+            position: relative;
         }
         
-        /* Mosaïque Amundi */
+        /* Mosaïque Amundi - Logo plus petit et taille fixe */
         body::before {
             content: '';
             position: absolute;
@@ -28,8 +27,9 @@
             height: 100%;
             background-image: url('https://upload.wikimedia.org/wikipedia/commons/a/aa/Logo_d%27Amundi.png');
             background-repeat: repeat;
-            opacity: 0.1; /* Transparence pour que ce soit un fond léger */
-            z-index: -1; /* Place le fond derrière le contenu */
+            background-size: 80px; /* Taille fixe des logos */
+            opacity: 0.15;
+            z-index: -1;
         }
 
         .container {
@@ -40,11 +40,11 @@
             text-align: center;
             max-width: 400px;
             position: relative;
-            z-index: 10; /* Assure que le contenu est au-dessus du fond Amundi et des images qui apparaissent */
+            z-index: 10;
         }
         h1 { color: #333; font-size: 24px; }
         .beer-icon { font-size: 80px; margin-bottom: 20px; }
-        .buttons { margin-top: 30px; display: flex; justify-content: center; gap: 20px; }
+        .buttons { margin-top: 30px; display: flex; justify-content: center; gap: 20px; min-height: 50px; }
         
         button {
             padding: 12px 30px;
@@ -52,35 +52,25 @@
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.2s;
-            z-index: 20; /* S'assure que les boutons sont toujours cliquables */
-            position: relative; /* Nécessaire pour le z-index */
         }
-        #yesBtn { background-color: #ff4081; color: white; }
+        #yesBtn { background-color: #ff4081; color: white; z-index: 20; }
         #noBtn { 
             background-color: #e0e0e0; 
             color: #555; 
-            position: absolute; /* Reste en absolute pour pouvoir bouger */
-            /* Ajout d'un left/top initial pour le positionnement */
-            left: 50%; 
-            transform: translateX(-50%); 
-            top: auto; 
-            bottom: 30px; /* Positionnement initial */
-            white-space: nowrap; /* Empêche le texte de se couper si le bouton est trop petit */
+            position: fixed; /* Pour bouger partout */
+            z-index: 20;
         }
         
-        .success-gif { width: 100%; border-radius: 10px; }
+        .success-gif { width: 100%; border-radius: 10px; margin-top: 15px; }
 
         .popup-image {
             position: absolute;
-            opacity: 0; /* Commence invisible */
-            transition: opacity 0.5s ease-in-out;
-            pointer-events: none; /* Permet de cliquer à travers l'image si elle recouvre des éléments */
-            z-index: 0; /* S'assure que c'est en arrière-plan par rapport au conteneur */
-            max-width: 200px; /* Taille maximale de l'image */
+            z-index: 1;
+            max-width: 150px;
             height: auto;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            pointer-events: none;
+            transition: opacity 0.5s;
         }
     </style>
 </head>
@@ -96,99 +86,55 @@
         </div>
     </div>
     <div id="celebration" style="display:none;">
-        <img src="https://usagif.com/gif/funny-celebrate-14/" alt="Fête" class="success-gif">
+        <img src="https://media.giphy.com/media/l2JhORT5IFXc6EY4o/giphy.gif" alt="Fête" class="success-gif">
         <h2>Santé ! 🎉🍻</h2>
     </div>
 </div>
 
 <script>
     const noBtn = document.getElementById('noBtn');
-    const container = document.getElementById('mainCard'); // Utilise la carte comme référence pour le positionnement initial
+    
+    // Position initiale du bouton non
+    noBtn.style.top = (window.innerHeight / 2 + 50) + "px";
+    noBtn.style.left = (window.innerWidth / 2 + 20) + "px";
 
     function moveButton() {
-        const containerRect = container.getBoundingClientRect();
-        const btnRect = noBtn.getBoundingClientRect();
-
-        // Calcule les limites pour que le bouton reste visible
-        const minX = containerRect.left;
-        const maxX = containerRect.right - btnRect.width;
-        const minY = containerRect.top;
-        const maxY = containerRect.bottom - btnRect.height;
-        
-        // Nouvelle position aléatoire dans les limites du viewport
-        const newX = Math.random() * (window.innerWidth - btnRect.width);
-        const newY = Math.random() * (window.innerHeight - btnRect.height);
-
-        noBtn.style.left = newX + 'px';
-        noBtn.style.top = newY + 'px';
-        noBtn.style.position = 'fixed'; // Changer en fixed pour bouger sur toute la page
-        noBtn.style.transform = 'none'; // Supprimer le transform pour ne pas interférer avec left/top
+        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+        noBtn.style.left = x + 'px';
+        noBtn.style.top = y + 'px';
     }
-
-    // Gestion pour le bouton "Non" qui s'enfuit à l'approche de la souris
-    let noButtonInterval;
-    noBtn.addEventListener('mouseover', () => {
-        if (!noButtonInterval) {
-            noButtonInterval = setInterval(moveButton, 100); // Bouge rapidement tant que la souris est dessus
-        }
-    });
-    noBtn.addEventListener('mouseout', () => {
-        clearInterval(noButtonInterval);
-        noButtonInterval = null;
-    });
-
 
     function celebrate() {
         document.getElementById('content').style.display = 'none';
         document.getElementById('celebration').style.display = 'block';
-        // Arrêter l'intervalle des images flottantes si le "Oui" est cliqué
-        clearInterval(imageInterval); 
+        clearInterval(imageInterval);
     }
 
-    // Fonction pour faire apparaître l'image toutes les 2 secondes
-    const imageUrl = 'https://i.postimg.cc/WhSwnY6p/image.png'; // L'image que tu as fournie
-    let imageInterval;
-
+    // Image popup toutes les 2 secondes (Lien direct réparé)
+    const imageUrl = 'https://i.postimg.cc/WhSwnY6p/image.png'; 
+    
     function spawnImage() {
         const img = document.createElement('img');
         img.src = imageUrl;
         img.className = 'popup-image';
-        document.body.appendChild(img);
-
-        // Position aléatoire sur la page, mais pas sur le conteneur principal
-        const containerRect = container.getBoundingClientRect();
-        let x, y;
-
-        // Tente de trouver une position hors du container principal
-        let attempts = 0;
-        do {
-            x = Math.random() * (window.innerWidth - img.offsetWidth);
-            y = Math.random() * (window.innerHeight - img.offsetHeight);
-            attempts++;
-            if (attempts > 50) break; // Évite une boucle infinie si l'écran est trop petit
-        } while (
-            (x + img.offsetWidth > containerRect.left && x < containerRect.right &&
-             y + img.offsetHeight > containerRect.top && y < containerRect.bottom)
-        );
-
+        
+        // Position aléatoire
+        const x = Math.random() * (window.innerWidth - 150);
+        const y = Math.random() * (window.innerHeight - 150);
+        
         img.style.left = x + 'px';
         img.style.top = y + 'px';
-        img.style.opacity = 1; // Rendre visible
+        document.body.appendChild(img);
 
-        // Faire disparaître l'image après quelques secondes et la supprimer
+        // Disparition après 3 secondes
         setTimeout(() => {
-            img.style.opacity = 0;
-            setTimeout(() => {
-                img.remove();
-            }, 500); // Attendre la fin de la transition d'opacité avant de supprimer
-        }, 4000); // L'image reste visible 4 secondes
+            img.style.opacity = '0';
+            setTimeout(() => img.remove(), 500);
+        }, 3000);
     }
 
-    // Démarre la génération d'images toutes les 2 secondes
-    window.onload = () => {
-        imageInterval = setInterval(spawnImage, 2000);
-    };
-
+    const imageInterval = setInterval(spawnImage, 2000);
 </script>
 
 </body>
