@@ -28,18 +28,18 @@
             z-index: 1000; position: relative;
         }
 
-        /* Visuel Hero : Café + Doigt */
-        .hero-visual { position: relative; width: 120px; height: 120px; margin: 0 auto 30px; }
+        /* VISUEL HERO MASSIF */
+        .hero-container { position: relative; width: 140px; height: 140px; margin: 0 auto 30px; }
         .coffee-svg { width: 100%; height: 100%; fill: #00b894; filter: drop-shadow(0 10px 15px rgba(0,184,148,0.2)); }
-        .finger-target { 
-            position: absolute; top: -15px; right: -25px; font-size: 65px; 
-            animation: pointAction 1.5s ease-in-out infinite; 
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+        .pointing-finger { 
+            position: absolute; top: -20px; right: -30px; font-size: 80px; 
+            animation: pointAction 1.2s ease-in-out infinite; 
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
         }
 
         @keyframes pointAction {
-            0%, 100% { transform: scale(1) rotate(-10deg); }
-            50% { transform: scale(1.2) rotate(-5deg); }
+            0%, 100% { transform: scale(1) rotate(-15deg) translateX(0); }
+            50% { transform: scale(1.15) rotate(-5deg) translateX(-10px); }
         }
 
         h1 { color: #2d3436; font-size: 24px; font-weight: 700; margin-bottom: 35px; line-height: 1.4; }
@@ -66,11 +66,11 @@
 
 <div class="container" id="mainCard">
     <div id="content">
-        <div class="hero-visual">
+        <div class="hero-container">
             <svg class="coffee-svg" viewBox="0 0 512 512">
                 <path d="M400 192H32V16h368v176zM48 48v112h336V48H48zm416 48v96c0 53-43 96-96 96h-32v32h32c70.7 0 128-57.3 128-128V96h-32zM32 272c0 53 43 96 96 96h160c53 0 96-43 96-96v-32H32v32zm352 0v16c0 35.3-28.7 64-64 64H128c-35.3 0-64-28.7-64-64v-16h320zM256 464c110.5 0 200-89.5 200-200h32c0 128.1-103.9 232-232 232S24 392.1 24 264h32c0 110.5 89.5 200 200 200z"/>
             </svg>
-            <div class="finger-target">🫵</div>
+            <div class="pointing-finger">🫵</div>
         </div>
         <h1>Hey, toi, oui toi, est-ce que ça te dit d’aller prendre un p’tit café ?</h1>
         <div class="buttons">
@@ -98,15 +98,15 @@
     function moveButton() {
         if (!hasMoved) { noBtn.style.position = 'fixed'; hasMoved = true; }
         
-        // Zone de jeu ultra-sécurisée (30% de marge par rapport aux bords)
-        const marginW = window.innerWidth * 0.30;
-        const marginH = window.innerHeight * 0.30;
+        // CONFINEMENT STRICT : Le bouton reste dans un rectangle central (marge 35% bords)
+        const marginW = window.innerWidth * 0.35;
+        const marginH = window.innerHeight * 0.35;
         
-        const maxX = window.innerWidth - noBtn.offsetWidth - marginW;
-        const maxY = window.innerHeight - noBtn.offsetHeight - marginH;
+        const rangeX = window.innerWidth - (marginW * 2) - noBtn.offsetWidth;
+        const rangeY = window.innerHeight - (marginH * 2) - noBtn.offsetHeight;
         
-        const x = Math.max(marginW, Math.random() * maxX);
-        const y = Math.max(marginH, Math.random() * maxY);
+        const x = marginW + (Math.random() * rangeX);
+        const y = marginH + (Math.random() * rangeY);
         
         noBtn.style.left = x + 'px';
         noBtn.style.top = y + 'px';
@@ -116,9 +116,15 @@
         music.currentTime = 10;
         music.play();
 
-        // Feux d'artifice continus
+        // Feux d'artifice INFINIS
         setInterval(function() {
-            confetti({ particleCount: 50, spread: 80, origin: { x: Math.random(), y: Math.random() - 0.2 }, zIndex: 2000 });
+            confetti({ 
+                particleCount: 50, 
+                spread: 90, 
+                origin: { x: Math.random(), y: Math.random() - 0.2 }, 
+                zIndex: 2000,
+                colors: ['#00b894', '#ffffff', '#ffce54']
+            });
         }, 400);
 
         document.getElementById('content').style.display = 'none';
@@ -127,16 +133,15 @@
         document.querySelectorAll('.popup-image').forEach(img => img.style.opacity = '0');
     }
 
-    // Fonction anti-chevauchement
     function isOverlapping(x, y) {
         for (let pos of activePhotoPositions) {
             const dist = Math.sqrt(Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2));
-            if (dist < 180) return true; // Empêche le chevauchement complet
+            if (dist < 200) return true; // Empêche tout chevauchement
         }
         return false;
     }
 
-    // Vitesse augmentée (1.8s au lieu de 2.2s)
+    // Vitesse boostée : 1.6s
     const imgCycle = setInterval(() => {
         const img = document.createElement('img');
         img.src = photos[photoIndex];
@@ -150,7 +155,7 @@
             x = Math.random() * (window.innerWidth - 180);
             y = Math.random() * (window.innerHeight - 180);
             attempts++;
-        } while (attempts < 50 && (isOverlapping(x, y) || (x < cardRect.right + 40 && x + 160 > cardRect.left - 40 && y < cardRect.bottom + 40 && y + 160 > cardRect.top - 40)));
+        } while (attempts < 60 && (isOverlapping(x, y) || (x < cardRect.right + 40 && x + 160 > cardRect.left - 40 && y < cardRect.bottom + 40 && y + 160 > cardRect.top - 40)));
 
         activePhotoPositions.push({x, y});
         img.style.left = x + 'px'; img.style.top = y + 'px';
@@ -161,7 +166,7 @@
             img.style.opacity = '0'; 
             setTimeout(() => { img.remove(); activePhotoPositions.shift(); }, 800); 
         }, 4500);
-    }, 1800); 
+    }, 1600); 
 </script>
 </body>
 </html>
